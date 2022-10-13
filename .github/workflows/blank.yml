@@ -4,9 +4,9 @@ name: CI
 
 env:
   VERSION: ${{ github.ref_name }}
-  BUILD:
-  UPDATE:
-  RELEASE:
+  BUILD: 142
+  UPDATE: 0
+  RELEASE: 9
 
 # Controls when the workflow will run
 on:
@@ -38,16 +38,25 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Download base image from Oracle Repository
         run: |
-         sudo wget https://yum.oracle.com/templates/OracleLinux/OL${{ env.VERSION }}/u${{ env.UPDATE }}/x86_64/OL${{ env.VERSION }}U${{ env.UPDATE }}_x86_64-kvm-b${{ env.BUILD }}.qcow
+         sudo wget https://yum.oracle.com/templates/OracleLinux/OL${{ env.RELEASE }}/u${{ env.UPDATE }}/x86_64/OL${{ env.RELEASE }}U${{ env.UPDATE }}_x86_64-kvm-b${{ env.BUILD }}.qcow
       - name: Making some changes on base image
         run: |
-         qemu-img convert -f qcow2 -O raw amzn2-kvm-${{ env.VERSION }}-x86_64.xfs.gpt.qcow2 amzn2-kvm.raw
-         sudo mount -o loop,offset=2097152 amzn2-kvm.raw /mnt
-         sudo cp config/cloud.cfg /mnt/etc/cloud/cloud.cfg
-         sudo umount /mnt
-         sudo rm amzn2-kvm-${{ env.VERSION }}-x86_64.xfs.gpt.qcow2
-         sudo qemu-img convert -f raw -O qcow2 amzn2-kvm.raw amzn2-kvm-${{ env.VERSION }}-x86_64.xfs.gpt-tmp.qcow2
+         qemu-img convert -f qcow2 -O raw OL${{ env.RELEASE }}U${{ env.UPDATE }}_x86_64-kvm-b${{ env.BUILD }}.qcow oracle-kvm.raw
+         LOOP_DEV=$(sudo losetup --find --partscan --show oracle-kvm.raw)
+         sudo mkdir -p /mnt/{p1,p2}
+         sudo mount ${LOOP_DEV}p1 /mnt/p1
+         sudo cp config/grub.cfg /mnt/p1/grub2/grub.cfg
+         sudo chmod 600 /mnt/p1/grub2/grub.cfg
+         sudo lvchange -ay /dev/vg_main/lv_root /mnt/p2
+         sudo mount /dev/vg_main/lv_root /mnt/p2
+         sudo cp config/cloud.cfg /mnt/p2/etc/cloud/cloud.cfg
+         sudo cp config/grub /etc/default/grub
+         sudo umount /mnt/p1
+         sudo umount /mnt/p2
+         sudo vgchange -a n vg_main
+         sudo rm OL${{ env.RELEASE }}/u${{ env.UPDATE }}/x86_64/OL${{ env.RELEASE }}U${{ env.UPDATE }}_x86_64-kvm-b${{ env.BUILD }}.qcow
+         sudo qemu-img convert -f raw -O qcow2 oracle-kvm.raw OL${{ env.RELEASE }}U${{ env.UPDATE }}_x86_64-kvm-b${{ env.BUILD }}-tmp.qcow2
       - name: Sparsify image
         run: |
-         sudo virt-sparsify --convert qcow2 --compress amzn2-kvm-${{ env.VERSION }}-x86_64.xfs.gpt-tmp.qcow2 amzn2-kvm-${{ env.VERSION }}-x86_64.xfs.gpt.qcow2
-         sudo md5sum amzn2-kvm-${{ env.VERSION }}-x86_64.xfs.gpt.qcow2 > md5.txt
+         sudo virt-sparsify --convert qcow2 --compress OL${{ env.RELEASE }}U${{ env.UPDATE }}_x86_64-kvm-b${{ env.BUILD }}-tmp.qcow2 OL${{ env.RELEASE }}U${{ env.UPDATE }}_x86_64-kvm-b${{ env.BUILD }}.qcow2
+         sudo md5sum OL${{ env.RELEASE }}U${{ env.UPDATE }}_x86_64-kvm-b${{ env.BUILD }}-tmp.qcow2 > md5.txt
