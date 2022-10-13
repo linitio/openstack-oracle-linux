@@ -47,10 +47,10 @@ jobs:
          sudo mount ${LOOP_DEV}p1 /mnt/p1
          sudo cp config/grub.cfg /mnt/p1/grub2/grub.cfg
          sudo chmod 600 /mnt/p1/grub2/grub.cfg
-         sudo lvchange -ay /dev/vg_main/lv_root /mnt/p2
+         sudo lvchange -ay /dev/vg_main/lv_root
          sudo mount /dev/vg_main/lv_root /mnt/p2
          sudo cp config/cloud.cfg /mnt/p2/etc/cloud/cloud.cfg
-         sudo cp config/grub /etc/default/grub
+         sudo cp config/grub /mnt/p2/etc/default/grub
          sudo umount /mnt/p1
          sudo umount /mnt/p2
          sudo vgchange -a n vg_main
