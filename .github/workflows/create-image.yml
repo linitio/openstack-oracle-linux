@@ -60,7 +60,7 @@ jobs:
       - name: Sparsify image
         run: |
          sudo virt-sparsify --check-tmpdir=ignore --convert qcow2 --compress OL${{ env.RELEASE }}U${{ env.UPDATE }}_x86_64-kvm-b${{ env.BUILD }}-tmp.qcow2 OL${{ env.RELEASE }}U${{ env.UPDATE }}_x86_64-kvm-b${{ env.BUILD }}.qcow2
-         sudo md5sum OL${{ env.RELEASE }}U${{ env.UPDATE }}_x86_64-kvm-b${{ env.BUILD }}-tmp.qcow2 > md5.txt
+         sudo md5sum OL${{ env.RELEASE }}U${{ env.UPDATE }}_x86_64-kvm-b${{ env.BUILD }}.qcow2 > md5.txt
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
