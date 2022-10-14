@@ -50,7 +50,7 @@ To get a local copy up and running follow these simple example steps.
 ### How to use this image
 
 1. Set your OpenStack environment variables
-2. Download the latest image from [release page](https://github.com/linitio/openstack-amazon-linux-2-image/releases "Release page")
+2. Download the latest image from [release page](https://github.com/linitio/openstack-oracle-linux-image/releases "Release page")
 3. Upload image to your OpenStack environment
    ```sh
    openstack image create --disk-format=qcow2 --container-format=bare --min-disk 40 --file OL9U0_x86_64-kvm-b142.qcow2  'Oracle Linux 9'
