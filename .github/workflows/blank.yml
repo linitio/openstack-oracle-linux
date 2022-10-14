@@ -45,12 +45,12 @@ jobs:
          LOOP_DEV=$(sudo losetup --find --partscan --show oracle-kvm.raw)
          sudo mkdir -p /mnt/{p1,p2}
          sudo mount ${LOOP_DEV}p1 /mnt/p1
-         sudo cp config/grub.cfg /mnt/p1/grub2/grub.cfg
-         sudo chmod 600 /mnt/p1/grub2/grub.cfg
+         sudo sed -i 's/console=tty0/console=tty0 console=ttyS0,115200n8/' /mnt/p1/loader/entries/*.conf
+         sudo sed -i 's/console=tty0/console=tty0 console=ttyS0,115200n8/' /mnt/p1/grub2/grub.cfg
          sudo lvchange -ay /dev/vg_main/lv_root
          sudo mount /dev/vg_main/lv_root /mnt/p2
          sudo cp config/cloud.cfg /mnt/p2/etc/cloud/cloud.cfg
-         sudo cp config/grub /mnt/p2/etc/default/grub
+         sudo sed -i 's/console=tty0/console=tty0 console=ttyS0,115200n8/' /mnt/p2/etc/default/grub
          sudo umount /mnt/p1
          sudo umount /mnt/p2
          sudo vgchange -a n vg_main
