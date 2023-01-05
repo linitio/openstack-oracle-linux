@@ -4,8 +4,8 @@ name: CI
 
 env:
   VERSION: ${{ github.ref_name }}
-  BUILD: 142
-  UPDATE: 0
+  BUILD: 158
+  UPDATE: 1
   RELEASE: 9
 
 # Controls when the workflow will run
