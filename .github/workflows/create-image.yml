@@ -4,8 +4,8 @@ name: CI
 
 env:
   VERSION: ${{ github.ref_name }}
-  BUILD: 158
-  UPDATE: 1
+  BUILD: 197
+  UPDATE: 2
   RELEASE: 9
   BASE_OS_IMAGE: base-os.qcow2
 
